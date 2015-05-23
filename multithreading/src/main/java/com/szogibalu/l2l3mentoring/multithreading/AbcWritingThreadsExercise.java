@@ -2,7 +2,7 @@ package com.szogibalu.l2l3mentoring.multithreading;
 
 import static java.lang.Thread.currentThread;
 
-public class AbcWritingThreads {
+public class AbcWritingThreadsExercise {
 
     private static final int HIGHEST_PRIORITY = 1;
     private static final int LOWEST_PRIORITY = 3;
