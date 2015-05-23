@@ -10,169 +10,169 @@ import java.util.Set;
 
 public class ChainSmokerProblem {
 
-	static final Random RANDOM = new Random();
+    static final Random RANDOM = new Random();
 
-	enum Ingredient {
-		MATCHES, PAPER, TOBACCO;
+    enum Ingredient {
+	MATCHES, PAPER, TOBACCO;
+    }
+
+    static abstract class Smoker implements Runnable {
+
+	private final Desktop desktop;
+
+	public Smoker(Desktop desktop) {
+	    this.desktop = desktop;
 	}
 
-	static abstract class Smoker implements Runnable {
+	abstract Ingredient getIngredient();
 
-		private final Desktop desktop;
+	void smoke() {
+	    System.out.println(getIngredient() + " smoker is smoking...");
+	}
 
-		public Smoker(Desktop desktop) {
-			this.desktop = desktop;
-		}
-
-		abstract Ingredient getIngredient();
-
-		void smoke() {
-			System.out.println(getIngredient() + " smoker is smoking...");
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				synchronized (desktop) {
-					while (!desktop.isReadyForSmoke()) {
-						try {
-							desktop.wait();
-						} catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
-						}
-					}
-					if (!desktop.getIngredients().contains(getIngredient())) {
-						smoke();
-						desktop.getIngredients().clear();
-						try {
-							Thread.sleep(RANDOM.nextInt(5000));
-						} catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
-						}
-					}
-					desktop.notifyAll();
-				}
+	@Override
+	public void run() {
+	    while (true) {
+		synchronized (desktop) {
+		    while (!desktop.isReadyForSmoke()) {
+			try {
+			    desktop.wait();
+			} catch (final InterruptedException e) {
+			    Thread.currentThread().interrupt();
 			}
-		}
-	}
-
-	static class TobaccoSmoker extends Smoker {
-
-		public TobaccoSmoker(Desktop desktop) {
-			super(desktop);
-		}
-
-		@Override
-		public Ingredient getIngredient() {
-			return Ingredient.TOBACCO;
-		}
-	}
-
-	static class PaperSmoker extends Smoker {
-
-		public PaperSmoker(Desktop desktop) {
-			super(desktop);
-		}
-
-		@Override
-		public Ingredient getIngredient() {
-			return Ingredient.PAPER;
-		}
-	}
-
-	static class MatchesSmoker extends Smoker {
-
-		public MatchesSmoker(Desktop desktop) {
-			super(desktop);
-		}
-
-		@Override
-		public Ingredient getIngredient() {
-			return Ingredient.MATCHES;
-		}
-	}
-
-	static class Coordinator implements Runnable {
-
-		private final Desktop desktop;
-
-		public Coordinator(Desktop desktop) {
-			this.desktop = desktop;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				synchronized (desktop) {
-					while (desktop.isReadyForSmoke()) {
-						try {
-							desktop.wait();
-						} catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
-						}
-					}
-					Set<Ingredient> selectedItems = new HashSet<>();
-					while (selectedItems.size() != 2) {
-						selectedItems.add(desktop.getRandomSmoker()
-								.getIngredient());
-					}
-					System.out.println("Selected items: " + selectedItems);
-					desktop.getIngredients().addAll(selectedItems);
-					desktop.notifyAll();
-				}
+		    }
+		    if (!desktop.getIngredients().contains(getIngredient())) {
+			smoke();
+			desktop.getIngredients().clear();
+			try {
+			    Thread.sleep(RANDOM.nextInt(5000));
+			} catch (final InterruptedException e) {
+			    Thread.currentThread().interrupt();
 			}
-
+		    }
+		    desktop.notifyAll();
 		}
+	    }
+	}
+    }
+
+    static class TobaccoSmoker extends Smoker {
+
+	public TobaccoSmoker(Desktop desktop) {
+	    super(desktop);
 	}
 
-	static class Desktop {
+	@Override
+	public Ingredient getIngredient() {
+	    return Ingredient.TOBACCO;
+	}
+    }
 
-		private final List<Ingredient> ingredients;
+    static class PaperSmoker extends Smoker {
 
-		private List<Smoker> smokers;
+	public PaperSmoker(Desktop desktop) {
+	    super(desktop);
+	}
 
-		public Desktop() {
-			this.ingredients = new ArrayList<>();
-		}
+	@Override
+	public Ingredient getIngredient() {
+	    return Ingredient.PAPER;
+	}
+    }
 
-		public void addSmokers(Smoker... smokers) {
-			this.smokers = asList(smokers);
-		}
+    static class MatchesSmoker extends Smoker {
 
-		public List<Ingredient> getIngredients() {
-			return ingredients;
-		}
+	public MatchesSmoker(Desktop desktop) {
+	    super(desktop);
+	}
 
-		public Smoker getRandomSmoker() {
-			return smokers.get(RANDOM.nextInt(smokers.size()));
-		}
+	@Override
+	public Ingredient getIngredient() {
+	    return Ingredient.MATCHES;
+	}
+    }
 
-		public boolean isReadyForSmoke() {
-			if (smokers == null) {
-				return false;
+    static class Coordinator implements Runnable {
+
+	private final Desktop desktop;
+
+	public Coordinator(Desktop desktop) {
+	    this.desktop = desktop;
+	}
+
+	@Override
+	public void run() {
+	    while (true) {
+		synchronized (desktop) {
+		    while (desktop.isReadyForSmoke()) {
+			try {
+			    desktop.wait();
+			} catch (final InterruptedException e) {
+			    Thread.currentThread().interrupt();
 			}
-			return ingredients.size() == smokers.size() - 1;
+		    }
+		    final Set<Ingredient> selectedItems = new HashSet<>();
+		    while (selectedItems.size() != 2) {
+			selectedItems.add(desktop.getRandomSmoker()
+				.getIngredient());
+		    }
+		    System.out.println("Selected items: " + selectedItems);
+		    desktop.getIngredients().addAll(selectedItems);
+		    desktop.notifyAll();
 		}
+	    }
 
-		public List<Smoker> getSmokers() {
-			return smokers;
-		}
+	}
+    }
+
+    static class Desktop {
+
+	private final List<Ingredient> ingredients;
+
+	private List<Smoker> smokers;
+
+	public Desktop() {
+	    ingredients = new ArrayList<>();
 	}
 
-	public static void main(String[] args) {
-		Desktop desktop = new Desktop();
-		TobaccoSmoker tobaccoSmoker = new TobaccoSmoker(desktop);
-		PaperSmoker paperSmoker = new PaperSmoker(desktop);
-		MatchesSmoker matchesSmoker = new MatchesSmoker(desktop);
-
-		new Thread(tobaccoSmoker).start();
-		new Thread(paperSmoker).start();
-		new Thread(matchesSmoker).start();
-
-		desktop.addSmokers(tobaccoSmoker, paperSmoker, matchesSmoker);
-
-		Coordinator coordinator = new Coordinator(desktop);
-
-		new Thread(coordinator).start();
+	public void addSmokers(Smoker... smokers) {
+	    this.smokers = asList(smokers);
 	}
+
+	public List<Ingredient> getIngredients() {
+	    return ingredients;
+	}
+
+	public Smoker getRandomSmoker() {
+	    return smokers.get(RANDOM.nextInt(smokers.size()));
+	}
+
+	public boolean isReadyForSmoke() {
+	    if (smokers == null) {
+		return false;
+	    }
+	    return ingredients.size() == smokers.size() - 1;
+	}
+
+	public List<Smoker> getSmokers() {
+	    return smokers;
+	}
+    }
+
+    public static void main(String[] args) {
+	final Desktop desktop = new Desktop();
+	final TobaccoSmoker tobaccoSmoker = new TobaccoSmoker(desktop);
+	final PaperSmoker paperSmoker = new PaperSmoker(desktop);
+	final MatchesSmoker matchesSmoker = new MatchesSmoker(desktop);
+
+	new Thread(tobaccoSmoker).start();
+	new Thread(paperSmoker).start();
+	new Thread(matchesSmoker).start();
+
+	desktop.addSmokers(tobaccoSmoker, paperSmoker, matchesSmoker);
+
+	final Coordinator coordinator = new Coordinator(desktop);
+
+	new Thread(coordinator).start();
+    }
 }
