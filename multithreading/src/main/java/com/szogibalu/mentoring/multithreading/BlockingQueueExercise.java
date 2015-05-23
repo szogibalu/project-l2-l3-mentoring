@@ -1,4 +1,4 @@
-package com.szogibalu.l2l3mentoring.multithreading;
+package com.szogibalu.mentoring.multithreading;
 
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
