@@ -52,7 +52,7 @@ public class AbcWritingThreadsExercise {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         final Writer writer = new Writer();
 
         new Thread(new WriterThread(writer, 3, "c")).start();
