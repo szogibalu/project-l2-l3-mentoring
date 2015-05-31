@@ -1,6 +1,5 @@
 package com.szogibalu.mentoring.eight;
 
-
 public class LambaScopeFeatures {
 
     @FunctionalInterface

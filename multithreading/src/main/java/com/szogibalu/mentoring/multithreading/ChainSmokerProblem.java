@@ -165,14 +165,14 @@ public class ChainSmokerProblem {
 	final PaperSmoker paperSmoker = new PaperSmoker(desktop);
 	final MatchesSmoker matchesSmoker = new MatchesSmoker(desktop);
 
-	new Thread(tobaccoSmoker).start();
-	new Thread(paperSmoker).start();
-	new Thread(matchesSmoker).start();
-
 	desktop.addSmokers(tobaccoSmoker, paperSmoker, matchesSmoker);
 
 	final Coordinator coordinator = new Coordinator(desktop);
 
 	new Thread(coordinator).start();
+
+	new Thread(tobaccoSmoker).start();
+	new Thread(paperSmoker).start();
+	new Thread(matchesSmoker).start();
     }
 }
