@@ -28,6 +28,7 @@ public class LambaScopeFeatures {
 	    System.out.println(innerNum);
 	    return String.valueOf(from);
 	};
+
     }
 
     void testOuteNum() {

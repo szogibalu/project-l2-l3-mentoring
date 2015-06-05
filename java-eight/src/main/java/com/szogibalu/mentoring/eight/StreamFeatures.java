@@ -11,14 +11,6 @@ public class StreamFeatures {
 	final List<String> letters = Arrays
 		.asList("a", "b", "c", "d", "e", "f");
 
-	// internal iterator
-	for (final String letter : letters) {
-	    System.out.println(letter);
-	}
-
-	// external
-	letters.forEach(System.out::println);
-
 	// eliminating mutability
 	final List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
 
@@ -37,16 +29,16 @@ public class StreamFeatures {
 	System.out.println(numbers.stream()
 		.filter(StreamFeatures::isGreaterThan2)
 		.filter(StreamFeatures::isEven)
-		.mapToInt(StreamFeatures::doubleIt).findFirst().getAsInt());
+		.mapToInt(StreamFeatures::doubleIt).findFirst().orElse(0));
 
 	// order matters
-	Stream.of("d2", "a2", "b1", "b3", "c").map(s -> {
+	Stream.of("d2", "a2", "b1", "b3", "c").filter(s -> {
+	    System.out.println("filter: " + s);
+	    return s.startsWith("a");
+	}).map(s -> {
 	    System.out.println("map: " + s);
 	    return s.toUpperCase();
-	}).filter(s -> {
-	    System.out.println("filter: " + s);
-	    return s.startsWith("A");
-	}).forEach(s -> System.out.println("forEach: " + s));
+	})forEach(s -> System.out.println("forEach: " + s));
 
 	// collect
 	final List<String> filtered = letters.stream()

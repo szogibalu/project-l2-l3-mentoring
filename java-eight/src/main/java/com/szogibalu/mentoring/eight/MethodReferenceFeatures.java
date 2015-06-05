@@ -1,7 +1,6 @@
 package com.szogibalu.mentoring.eight;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -27,8 +26,13 @@ public class MethodReferenceFeatures {
 	print(x, j -> t1.write(j));
 
 	// Class::instanceMethod
-	final Comparator<String> comparator = String::compareToIgnoreCase;
-	compare(comparator, "test", "test");
+	// Reference to an Instance Method of an Arbitrary Object of a
+	// Particular Type
+	String[] stringArray = { "Barbara", "James", "Mary", "John",
+		"Patricia", "Robert", "Michael", "Linda" };
+	Arrays.sort(stringArray, String::compareToIgnoreCase);
+	Arrays.sort(stringArray, (String a, String b) -> a
+		.compareToIgnoreCase(b));
 
 	// Constructor references
 	final PersonFactory<Person> personFactory = Person::new;
@@ -36,13 +40,8 @@ public class MethodReferenceFeatures {
 
 	final List<String> stringList = Arrays.asList("test");
 	final Stream<String> streamString = stringList.stream();
-	final String[] stringArray = streamString.toArray(String[]::new);
+	stringArray = streamString.toArray(String[]::new);
 
-    }
-
-    static int compare(Comparator<String> comparator, String value1,
-	    String value2) {
-	return comparator.compare(value1, value2);
     }
 
     void write(String x) {

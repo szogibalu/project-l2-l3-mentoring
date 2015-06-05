@@ -10,6 +10,15 @@
 		<java.version>1.8</java.version>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -17,7 +26,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
-					 <compilerArgument>-parameters</compilerArgument>					
+					<compilerArgument>-parameters</compilerArgument>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>

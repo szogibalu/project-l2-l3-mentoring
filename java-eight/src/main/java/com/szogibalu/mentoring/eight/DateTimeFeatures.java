@@ -10,6 +10,7 @@ import java.time.Month;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 public class DateTimeFeatures {
 
@@ -61,6 +62,12 @@ public class DateTimeFeatures {
 
 	final Instant now = Instant.now();
 	System.out.println(now);
-    }
 
+	final Date oldDate = Date.from(now);
+	System.out.println(oldDate);
+
+	final Date ts = new Date();
+	final Instant instant = Instant.ofEpochMilli(ts.getTime());
+	System.out.println(instant);
+    }
 }
