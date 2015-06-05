@@ -38,7 +38,7 @@ public class StreamFeatures {
 	}).map(s -> {
 	    System.out.println("map: " + s);
 	    return s.toUpperCase();
-	})forEach(s -> System.out.println("forEach: " + s));
+	}).forEach(s -> System.out.println("forEach: " + s));
 
 	// collect
 	final List<String> filtered = letters.stream()
